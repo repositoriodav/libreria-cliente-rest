@@ -1,0 +1,16 @@
+{
+  "name": "libreria-cliente-rest-log-operacional",
+  "version": "1.0.0",
+  "description": "Consuta de los metodos GET POST PUT y DELETE, dejando log en xml",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Wisley Fajardo Annear",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "jsontoxml": "^1.0.1"
+  }
+}
