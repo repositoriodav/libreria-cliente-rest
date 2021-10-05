@@ -1,6 +1,6 @@
 {
   "name": "libreria-cliente-rest-log-operacional",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Consuta de los metodos GET POST PUT y DELETE, dejando log en xml",
   "main": "src/index.js",
   "scripts": {

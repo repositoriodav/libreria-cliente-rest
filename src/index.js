@@ -1,5 +1,7 @@
 const axios = require('axios');
 const jsontoxml = require('jsontoxml')
+const fs = require('fs')
+const https = require('https');
 
 /**
  * Cliente Rest con metodos 
@@ -8,11 +10,11 @@ const jsontoxml = require('jsontoxml')
 class ClienteRest {
     /**
      * 
-     * @param {any} certificadoRest Certificados para firmar la petición
+     * @param {any} config Certificados para firmar la petición
      * @param {any} options opciones para enviar otros datos (URL log operacional)
      */
-    constructor(certificadoRest, options) {
-        this.certificadoRest = certificadoRest
+    constructor(config, options) {
+        this.config = config
         this.options = options
     }
     /**
@@ -26,7 +28,20 @@ class ClienteRest {
      * @param {Any} logger Se envia el datos para los logs del flujo del código 
      * @returns 
      */
-    call = async (method, url, headers, payload, serviceName, payloadParmsCtx, logger) => {
+    call = async (method, url, payload, serviceName, payloadParmsCtx, logger) => {
+  
+        const httpsAgentRest = this.getHttpsAgent()
+        const headers = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            httpsAgent: httpsAgentRest,
+            // new https.Agent({
+            //   rejectUnauthorized: false,
+            // }),
+            responseType: 'json',
+        }
+
         let response
         switch (method) {
             case 'GET':
@@ -182,7 +197,26 @@ class ClienteRest {
         }
         return respuestaLogOper
     }
+
+
+    getHttpsAgent() {
+        let datapowerCert = ''
+        let datapowerKey = ''
+        if (this.config.getVars().restClient.certificado.pubKey) {
+            // tslint:disable: tsr-detect-non-literal-fs-filename
+            datapowerCert = fs.readFileSync(this.config.getVars().restClient.certificado.pubKey).toString()
+            datapowerKey = fs.readFileSync(this.config.getVars().restClient.certificado.privKey).toString()
+            // tslint:enable: tsr-detect-non-literal-fs-filename
+        }
+
+        const httpsAgent = new https.Agent({
+            cert: datapowerCert,
+            key: datapowerKey,
+            rejectUnauthorized: false,
+        })
+        return httpsAgent
+    }
+
 }
 
 exports.ClienteRest = ClienteRest
-
